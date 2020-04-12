@@ -59,7 +59,7 @@ app.appendChild(container);
 
 const pokeRequest = new XMLHttpRequest();
 
-pokeRequest.open("GET", "https://pokeapi.co/api/v2/pokemon/?limit=20", true);
+pokeRequest.open("GET", "https://pokeapi.co/api/v2/pokemon/?limit=9", true);
 
 pokeRequest.onload = function () {
   const data = JSON.parse(this.response);
@@ -75,20 +75,29 @@ pokeRequest.onload = function () {
       container.appendChild(card);
 
       name.addEventListener("click", (event) => {
-        console.log(card.children.length);
         if (card.children.length == 1) {
           const detailsRequest = new XMLHttpRequest();
+
           detailsRequest.open("GET", pokemon.url, true);
+
           detailsRequest.onload = function () {
-            const details = JSON.parse(this.response);
-            const image = document.createElement("img");
-            image.setAttribute("class", "sprite");
-            image.src = details.sprites.front_default;
-            card.appendChild(image);
+            if (pokeRequest.status >= 200) {
+              const details = JSON.parse(this.response);
+              const image = document.createElement("img");
+
+              image.setAttribute("class", "sprite");
+              image.src = details.sprites.front_default;
+
+              card.appendChild(image);
+            } else {
+              const errorMessage = document.createElement("div");
+              errorMessage.textContent = "No Image";
+              app.appendChild(errorMessage);
+            }
           };
           detailsRequest.send();
         } else {
-          let images = document.querySelector(".sprite");
+          let images = card.querySelector(".sprite");
           images.remove();
         }
       });
@@ -96,6 +105,7 @@ pokeRequest.onload = function () {
   } else {
     const errorMessage = document.createElement("div");
     errorMessage.textContent = "No pokemon";
+    app.appendChild(errorMessage);
   }
 };
 
