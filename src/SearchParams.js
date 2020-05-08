@@ -8,14 +8,16 @@ const SearchParams = () => {
   const [animal, AnimalDropdown] = useDropdown("Animal", "dog", ANIMALS);
   const [breed, BreedDropdown, setBreed] = useDropdown("Breed", "", breeds);
 
-  useEffect(()=>{
+  useEffect(()=> {
     setBreeds([]);
     setBreed("");
-    pet.breeds(animal).then(({breeds})=> {
-      const breedStrings = breeds.map(({name}) => name);
+    pet.breeds(animal).then(({breeds: apiBreeds})=> {
+      const breedStrings = apiBreeds.map(({name}) => name);
       setBreeds(breedStrings);
+    // eslint-disable-next-line no-console
     }, console.error);
   }, [animal, setBreeds, setBreed]);
+
   return (
     <div className="search-params">
       <form>
